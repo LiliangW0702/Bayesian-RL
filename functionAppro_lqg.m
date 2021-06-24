@@ -9,18 +9,8 @@ s_limit=20000; %sampling limit of state
 N=2000;
 
 %%%%%%%%%%%%%%
-a_pre=a_limit*rand(3,1); %initialize the function weight a
-% Sigma=0.01;
-% R=10;
-% Q=1;
-% gamma=0.5;
-% theta1=-3;
-% theta2=2;
-% [P,~,~]=dare(theta1*sqrt(gamma),theta2,Q,R/gamma);
-% a0=gamma/(1-gamma)*P*Sigma; %true a0
-% a2=P; %true a2 
-% a1=0;
-% a_pre=[a0;a1;a2];
+%a_pre=a_limit*rand(3,1); %initialize the function weight a
+[~,~,~,a_pre]=lqgOpt(1);
 
 A=[];
 b=[];
@@ -81,17 +71,19 @@ function error_function_test() %test by the true RHS of Bellman equation
 s_limit=200;
 s=(-1+2*rand)*s_limit; %tets state
 %%%%%%%%%%%%parameters
-Sigma=0.01;
-R=10;
-Q=1;
-gamma=0.5;
-theta1=-3;
-theta2=2;
-[P,~,~]=dare(theta1*sqrt(gamma),theta2,Q,R/gamma);
-a0=gamma/(1-gamma)*P*Sigma; %true a0
-a2=P; %true a2 
-a1=0;
-a=[a0;a1;a2];
+% Sigma=0.01;
+% R=10;
+% Q=1;
+% gamma=0.5;
+% theta1=-3;
+% theta2=2;
+% [P,~,~]=dare(theta1*sqrt(gamma),theta2,Q,R/gamma);
+% a0=gamma/(1-gamma)*P*Sigma; %true a0
+% a2=P; %true a2 
+% a1=0;
+%a=[a0;a1;a2];
+[~,~,~,a]=lqgOpt(s);
+
 uopt=optCtrl(s,a);
 V=computeV(s,uopt,a); %true RHS of Bellman 
 result=error(V,s,a);
@@ -129,21 +121,22 @@ function computeV_test() %test by true optimal control and value function
 s_limit=200;
 s=(-1+2*rand)*s_limit; %tets state
 %%%%%%%%%%%%parameters
-Sigma=0.01;
-R=10;
-Q=1;
-gamma=0.5;
-theta1=-3;
-theta2=2;
-[P,~,~]=dare(theta1*sqrt(gamma),theta2,Q,R/gamma);
-V_tr=P*s^2+gamma/(1-gamma)*P*Sigma;%true value function for optimal control 
-
-K=gamma*theta2*P*theta1/(R+gamma*theta2^2*P);  %true optimal control gain
-u_tr=-1*K*s; %true optimal control
-a0=gamma/(1-gamma)*P*Sigma; %true a0
-a2=P; %true a2 
-a1=0;
-a=[a0;a1;a2];
+% Sigma=0.01;
+% R=10;
+% Q=1;
+% gamma=0.5;
+% theta1=-3;
+% theta2=2;
+% [P,~,~]=dare(theta1*sqrt(gamma),theta2,Q,R/gamma);
+% V_tr=P*s^2+gamma/(1-gamma)*P*Sigma;%true value function for optimal control 
+% 
+% K=gamma*theta2*P*theta1/(R+gamma*theta2^2*P);  %true optimal control gain
+% u_tr=-1*K*s; %true optimal control
+% a0=gamma/(1-gamma)*P*Sigma; %true a0
+% a2=P; %true a2 
+% a1=0;
+% a=[a0;a1;a2];
+[u_tr,V_tr,~,a]=lqgOpt(s);
 result=computeV(s,u_tr,a);
 disp(V_tr);
 disp(result);
@@ -173,19 +166,20 @@ end
 function computeOptCtrl_test() %test by using true optimal control 
 s=1; %tets state
 %%%%%%%%%%%%parameters
-Sigma=0.01;
-R=10;
-Q=1;
-gamma=0.5;
-theta1=-3;
-theta2=2;
-[P,~,~]=dare(theta1*sqrt(gamma),theta2,Q,R/gamma);
-K=gamma*theta2*P*theta1/(R+gamma*theta2^2*P);  %true optimal control gain
-u_tr=-1*K*s; %true optimal control
-a0=gamma*(1-gamma)*P*Sigma; %true a0
-a2=P; %true a2 
-a1=0;
-a=[a0;a1;a2];
+% Sigma=0.01;
+% R=10;
+% Q=1;
+% gamma=0.5;
+% theta1=-3;
+% theta2=2;
+% [P,~,~]=dare(theta1*sqrt(gamma),theta2,Q,R/gamma);
+% K=gamma*theta2*P*theta1/(R+gamma*theta2^2*P);  %true optimal control gain
+% u_tr=-1*K*s; %true optimal control
+% a0=gamma*(1-gamma)*P*Sigma; %true a0
+% a2=P; %true a2 
+% a1=0;
+%a=[a0;a1;a2];
+[u_tr,~,~,a]=lqgOpt(s);
 result=optCtrl(s,a);%computed optimal control
 disp(u_tr);
 disp(result);
@@ -211,4 +205,19 @@ den=2*(R+gamma*a2*theta2^2);
 optu=-1*num/den;
 end
 
-
+function [ctrl,V,P,a]=lqgOpt(s)
+Sigma=0.01;
+R=10;
+Q=1;
+gamma=0.5;
+theta1=-3;
+theta2=2;
+[P,~,~]=dare(theta1*sqrt(gamma),theta2,Q,R/gamma);
+K=gamma*theta2*P*theta1/(R+gamma*theta2^2*P);  %true optimal control gain
+ctrl=-1*K*s;
+V=P*s^2+gamma/(1-gamma)*P*Sigma;
+a0=gamma/(1-gamma)*P*Sigma; %true a0
+a2=P; %true a2 
+a1=0;
+a=[a0;a1;a2];
+end
