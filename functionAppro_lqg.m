@@ -76,8 +76,8 @@ k=k+1;
 
 
 end
-
-function error_function_test()
+ 
+function error_function_test() %test by the true RHS of Bellman equation
 s_limit=200;
 s=(-1+2*rand)*s_limit; %tets state
 %%%%%%%%%%%%parameters
@@ -93,7 +93,7 @@ a2=P; %true a2
 a1=0;
 a=[a0;a1;a2];
 uopt=optCtrl(s,a);
-V=computeV(s,uopt,a);
+V=computeV(s,uopt,a); %true RHS of Bellman 
 result=error(V,s,a);
 assert ( (result)^2< 1e-7,'Wrong error function');
 end
@@ -110,8 +110,8 @@ for i=1:N
 end
 end
 
-function value_function_test()
-s=2;
+function value_function_test() %test by comparing with the analytical answer
+s=2; 
 a=[-1;3;5];
 value_tr=25;
 result=value_function(s,a);
@@ -125,7 +125,7 @@ a0=a(1); a1=a(2); a2=a(3);
 V=a0+a1*s+a2*s^2;
 end
 
-function computeV_test()
+function computeV_test() %test by true optimal control and value function 
 s_limit=200;
 s=(-1+2*rand)*s_limit; %tets state
 %%%%%%%%%%%%parameters
@@ -170,7 +170,7 @@ r=Q*s^2+R*u^2;
 ob=r+gamma*integ;
 end 
 
-function computeOptCtrl_test()
+function computeOptCtrl_test() %test by using true optimal control 
 s=1; %tets state
 %%%%%%%%%%%%parameters
 Sigma=0.01;
@@ -210,3 +210,5 @@ den=2*(R+gamma*a2*theta2^2);
 %%%%%%%%%%%%
 optu=-1*num/den;
 end
+
+
