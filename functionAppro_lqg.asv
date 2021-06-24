@@ -4,15 +4,16 @@ clc;
 
 
 
-a_limit=10;
+a_limit=1000;
 
 %%%%%%%%%%%%%%
-[~,~,~,a_true]=lqgOpt(1);
+%a_pre=a_limit*rand(3,1); %initialize the function weight a
+[~,~,~,a_pre]=lqgOpt(1);
 
 
-
-a_pre=a_limit*rand(3,1); %initialize the function weight a
-
+x = linspace(-10, 10, 100);
+figure(1)
+plot(x, value_function(x, a_pre))
 
 %%
 
@@ -20,12 +21,13 @@ a_pre=a_limit*rand(3,1); %initialize the function weight a
 A=[]; % 
 b=[];
 x0=10; % 
-
+x=zeros(N,1);
 tolerence=0.000001;
 change=1000;
 j=0;
+Er=[];
 
-s_test=-0.5;
+s_test=4.0;
 
 %%%%%%%%%%%%test
 computeOptCtrl_test();%test optimal control computation function
@@ -34,17 +36,15 @@ value_function_test();
 error_function_test();
 
 %%%%%%%%randomly sample N states
-s_limit=200; %sampling limit of state
+s_limit=20000; %sampling limit of state
 N=2000;
 x = (-1 + 2 * rand(N, 1)) * s_limit;
 
 %%%%%%%%%%%%
 V=zeros(N,1);
 V_test=zeros(N,1);
-Er= zeros(N,1);
 
 %while j<10 %change>tolerence
-j = 1
 for k = 1:10
     for i=1:N
         s=x(i);
@@ -66,23 +66,15 @@ for k = 1:10
         j=j+1;
     end
     figure(1);
-    plot(1:k,Er(1:k));
+    plot(1:k,Er);
     ylim([0 10])
     figure(2);
-    plot(1:k,V_test(1:k));
+    plot(1:k,V_test);
     %ylim([0 10000])
+    k=k+1;
 
-    if (j == 10)
-        break
-    end
 end
  
-x = linspace(-10, 10, 100);
-figure(3)
-plot(x, value_function(x, a_pre), '--k')
-hold on
-plot(x, value_function(x, a_true), '-ko')
-
 function error_function_test() %test by the true RHS of Bellman equation
 s_limit=200;
 s=(-1+2*rand)*s_limit; %tets state

@@ -30,7 +30,7 @@ class inverted_pendulum(object):
         # ========================================================
         # dynamics
         s = np.array([[x], [x_dot], [theta], [theta_dot]])
-        ds_dt = np.matmul(self.A, s) + self.B * force + np.random.multivariate_normal(self.mean, self.cov, 1)
+        ds_dt = np.matmul(self.A, s) + self.B * force #+ np.random.multivariate_normal(self.mean, self.cov, 1)
 
         x_dot, xacc, theta_dot, thetaacc = ds_dt[0, 0], ds_dt[1, 0], ds_dt[2, 0], ds_dt[3, 0]
         return x_dot, xacc, theta_dot, thetaacc
