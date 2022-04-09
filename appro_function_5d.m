@@ -18,7 +18,7 @@ X=sample(N,s_lim,mu_lim,sig_lim);%sample N data points
 
 tolerence=1e-7;
 %initialization
-change=1000;
+change=1000; %hi
 load('a0.mat');
 a_pre=a0;
 %a_pre=a_lim*(-1+2*rand(21,1));
